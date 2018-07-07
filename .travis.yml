@@ -20,7 +20,6 @@ compiler:
 cache:
   - ccache: true
   - directories:
-      - $HOME/Library/Caches/Homebrew
       - $HOME/.cargo
       - $TRAVIS_BUILD_DIR/load-tester/target
 
