@@ -33,7 +33,7 @@ opencl (opencl_a)
 {
 	static_assert (ATOMIC_INT_LOCK_FREE == 2, "Atomic int needed");
 	auto count (rai::rai_network == rai::rai_networks::rai_test_network ? 1 : std::min (max_threads_a, std::max (1u, std::thread::hardware_concurrency ())));
-	for (auto i (0); i < count; ++i)
+	for (auto i (0u); i < count; ++i)
 	{
 		auto thread (std::thread ([this, i]() {
 			rai::work_thread_reprioritize ();
