@@ -125,8 +125,8 @@ TEST (wallet, two_item_iteration)
 			prvs.insert (key.data);
 		}
 	}
-	ASSERT_EQ (2, pubs.size ());
-	ASSERT_EQ (2, prvs.size ());
+	ASSERT_EQ (2u, pubs.size ());
+	ASSERT_EQ (2u, prvs.size ());
 	ASSERT_NE (pubs.end (), pubs.find (key1.pub));
 	ASSERT_NE (prvs.end (), prvs.find (key1.prv.data));
 	ASSERT_NE (pubs.end (), pubs.find (key2.pub));
@@ -688,7 +688,7 @@ TEST (wallet, version_1_2_upgrade)
 
 	wallet->enter_password ("1");
 	ASSERT_TRUE (wallet->valid_password ());
-	ASSERT_EQ (2, wallet->store.version (rai::transaction (wallet->store.environment, nullptr, false)));
+	ASSERT_EQ (2u, wallet->store.version (rai::transaction (wallet->store.environment, nullptr, false)));
 	rai::raw_key prv;
 	ASSERT_FALSE (wallet->store.fetch (rai::transaction (wallet->store.environment, nullptr, false), key.pub, prv));
 	ASSERT_EQ (key.prv, prv);

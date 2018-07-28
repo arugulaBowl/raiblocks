@@ -777,7 +777,7 @@ TEST (wallet, synchronizing)
 		rai::send_block send (latest, key1, 0, rai::test_genesis_key.prv, rai::test_genesis_key.pub, system1.work.generate (latest));
 		system1.nodes[0]->ledger.process (transaction, send);
 	}
-	ASSERT_EQ (0, wallet->active_status.active.count (rai_qt::status_types::synchronizing));
+	ASSERT_EQ (0u, wallet->active_status.active.count (rai_qt::status_types::synchronizing));
 	system0.nodes[0]->bootstrap_initiator.bootstrap (system1.nodes[0]->network.endpoint ());
 	auto iterations0 (0);
 	while (wallet->active_status.active.count (rai_qt::status_types::synchronizing) == 0)
