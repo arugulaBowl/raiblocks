@@ -279,7 +279,7 @@ void rai::network::broadcast_confirm_req_base (std::shared_ptr<rai::block> block
 	{
 		BOOST_LOG (node.log) << boost::str (boost::format ("Broadcasting confirm req for block %1% to %2% representatives") % block_a->hash ().to_string () % std::min (endpoints_a->size (), max_reps));
 	}
-	auto count (0);
+	size_t count (0);
 	while (!endpoints_a->empty () && count < max_reps)
 	{
 		send_confirm_req (endpoints_a->back ().endpoint, block_a);
@@ -673,9 +673,9 @@ log_rpc_value (true),
 bulk_pull_logging_value (false),
 work_generation_time_value (true),
 log_to_cerr_value (false),
+flush (true),
 max_size (16 * 1024 * 1024),
-rotation_size (4 * 1024 * 1024),
-flush (true)
+rotation_size (4 * 1024 * 1024)
 {
 }
 
@@ -1114,7 +1114,7 @@ bool rai::node_config::deserialize_json (bool & upgraded_a, boost::property_tree
 		{
 			auto work_peer (i->second.get<std::string> (""));
 			auto port_position (work_peer.rfind (':'));
-			result |= port_position == -1;
+			result |= port_position == std::string::npos;
 			if (!result)
 			{
 				auto port_str (work_peer.substr (port_position + 1));
@@ -2622,9 +2622,9 @@ public:
 		return outstanding.empty ();
 	}
 	std::function<void(uint64_t)> callback;
-	unsigned int backoff; // in seconds
 	std::shared_ptr<rai::node> node;
 	rai::block_hash root;
+	unsigned int backoff; // in seconds
 	std::mutex mutex;
 	std::map<boost::asio::ip::address, uint16_t> outstanding;
 	std::vector<std::pair<std::string, uint16_t>> need_resolve;
@@ -2905,7 +2905,7 @@ std::unordered_set<rai::endpoint> rai::peer_container::random_set (size_t count_
 	// Otherwise make sure we have a cutoff on attempting to randomly fill
 	if (!peers.empty ())
 	{
-		for (auto i (0); i < random_cutoff && result.size () < count_a; ++i)
+		for (size_t i (0); i < random_cutoff && result.size () < count_a; ++i)
 		{
 			auto index (random_pool.GenerateWord32 (0, peers_size - 1));
 			result.insert (peers.get<3> ()[index].endpoint);
@@ -3320,8 +3320,8 @@ last_bootstrap_attempt (std::chrono::steady_clock::time_point ()),
 last_rep_request (std::chrono::steady_clock::time_point ()),
 last_rep_response (std::chrono::steady_clock::time_point ()),
 rep_weight (0),
-node_id (),
-network_version (rai::protocol_version)
+network_version (rai::protocol_version),
+node_id ()
 {
 }
 
@@ -3709,7 +3709,7 @@ int rai::node::store_version ()
 
 rai::thread_runner::thread_runner (boost::asio::io_service & service_a, unsigned service_threads_a)
 {
-	for (auto i (0); i < service_threads_a; ++i)
+	for (auto i (0u); i < service_threads_a; ++i)
 	{
 		threads.push_back (std::thread ([&service_a]() {
 			try

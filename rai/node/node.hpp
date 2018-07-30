@@ -264,11 +264,11 @@ public:
 	std::mutex syn_cookie_mutex;
 	std::unordered_map<rai::endpoint, syn_cookie_info> syn_cookies;
 	std::unordered_map<boost::asio::ip::address, unsigned> syn_cookies_per_ip;
-	// Number of peers that don't support node ID
-	size_t legacy_peers;
 	// Called when a new peer is observed
 	std::function<void(rai::endpoint const &)> peer_observer;
 	std::function<void()> disconnect_observer;
+	// Number of peers that don't support node ID
+	size_t legacy_peers;
 	// Number of peers to crawl for being a rep every period
 	static size_t constexpr peers_per_crawl = 8;
 	// Maximum number of peers per IP (includes legacy peers)
@@ -539,11 +539,11 @@ private:
 	void process_receive_many (std::unique_lock<std::mutex> &);
 	bool stopped;
 	bool active;
+	rai::node & node;
 	std::chrono::steady_clock::time_point next_log;
 	std::deque<std::pair<std::shared_ptr<rai::block>, std::chrono::steady_clock::time_point>> blocks;
 	std::deque<std::shared_ptr<rai::block>> forced;
 	std::condition_variable condition;
-	rai::node & node;
 	std::mutex mutex;
 };
 class node : public std::enable_shared_from_this<rai::node>
