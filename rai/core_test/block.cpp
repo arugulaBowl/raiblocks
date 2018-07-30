@@ -46,7 +46,7 @@ TEST (block, send_serialize)
 	auto data (bytes.data ());
 	auto size (bytes.size ());
 	ASSERT_NE (nullptr, data);
-	ASSERT_NE (0, size);
+	ASSERT_NE (0u, size);
 	rai::bufferstream stream2 (data, size);
 	bool error (false);
 	rai::send_block block2 (error, stream2);
@@ -59,7 +59,7 @@ TEST (block, send_serialize_json)
 	rai::send_block block1 (0, 1, 2, rai::keypair ().prv, 4, 5);
 	std::string string1;
 	block1.serialize_json (string1);
-	ASSERT_NE (0, string1.size ());
+	ASSERT_NE (0u, string1.size ());
 	boost::property_tree::ptree tree1;
 	std::stringstream istream (string1);
 	boost::property_tree::read_json (istream, tree1);
@@ -90,7 +90,7 @@ TEST (block, receive_serialize_json)
 	rai::receive_block block1 (0, 1, rai::keypair ().prv, 3, 4);
 	std::string string1;
 	block1.serialize_json (string1);
-	ASSERT_NE (0, string1.size ());
+	ASSERT_NE (0u, string1.size ());
 	boost::property_tree::ptree tree1;
 	std::stringstream istream (string1);
 	boost::property_tree::read_json (istream, tree1);
@@ -105,7 +105,7 @@ TEST (block, open_serialize_json)
 	rai::open_block block1 (0, 1, 0, rai::keypair ().prv, 0, 0);
 	std::string string1;
 	block1.serialize_json (string1);
-	ASSERT_NE (0, string1.size ());
+	ASSERT_NE (0u, string1.size ());
 	boost::property_tree::ptree tree1;
 	std::stringstream istream (string1);
 	boost::property_tree::read_json (istream, tree1);
@@ -120,7 +120,7 @@ TEST (block, change_serialize_json)
 	rai::change_block block1 (0, 1, rai::keypair ().prv, 3, 4);
 	std::string string1;
 	block1.serialize_json (string1);
-	ASSERT_NE (0, string1.size ());
+	ASSERT_NE (0u, string1.size ());
 	boost::property_tree::ptree tree1;
 	std::stringstream istream (string1);
 	boost::property_tree::read_json (istream, tree1);
@@ -263,7 +263,7 @@ TEST (change_block, deserialize)
 	auto data (bytes.data ());
 	auto size (bytes.size ());
 	ASSERT_NE (nullptr, data);
-	ASSERT_NE (0, size);
+	ASSERT_NE (0u, size);
 	rai::bufferstream stream2 (data, size);
 	bool error (false);
 	rai::change_block block2 (error, stream2);
