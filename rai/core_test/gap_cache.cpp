@@ -23,7 +23,7 @@ TEST (gap_cache, add_existing)
 	while (arrival == std::chrono::steady_clock::now ())
 		;
 	cache.add (transaction, block1);
-	ASSERT_EQ (1, cache.blocks.size ());
+	ASSERT_EQ (1u, cache.blocks.size ());
 	auto existing2 (cache.blocks.get<1> ().find (block1->hash ()));
 	ASSERT_NE (cache.blocks.get<1> ().end (), existing2);
 	ASSERT_GT (existing2->arrival, arrival);
@@ -43,7 +43,7 @@ TEST (gap_cache, comparison)
 		;
 	auto block3 (std::make_shared<rai::send_block> (0, 42, 1, rai::keypair ().prv, 3, 4));
 	cache.add (transaction, block3);
-	ASSERT_EQ (2, cache.blocks.size ());
+	ASSERT_EQ (2u, cache.blocks.size ());
 	auto existing2 (cache.blocks.get<1> ().find (block3->hash ()));
 	ASSERT_NE (cache.blocks.get<1> ().end (), existing2);
 	ASSERT_GT (existing2->arrival, arrival);
@@ -84,16 +84,16 @@ TEST (gap_cache, two_dependencies)
 	auto send1 (std::make_shared<rai::send_block> (genesis.hash (), key.pub, 1, rai::test_genesis_key.prv, rai::test_genesis_key.pub, system.work.generate (genesis.hash ())));
 	auto send2 (std::make_shared<rai::send_block> (send1->hash (), key.pub, 0, rai::test_genesis_key.prv, rai::test_genesis_key.pub, system.work.generate (send1->hash ())));
 	auto open (std::make_shared<rai::open_block> (send1->hash (), key.pub, key.pub, key.prv, key.pub, system.work.generate (key.pub)));
-	ASSERT_EQ (0, system.nodes[0]->gap_cache.blocks.size ());
+	ASSERT_EQ (0u, system.nodes[0]->gap_cache.blocks.size ());
 	system.nodes[0]->block_processor.add (send2, std::chrono::steady_clock::now ());
 	system.nodes[0]->block_processor.flush ();
-	ASSERT_EQ (1, system.nodes[0]->gap_cache.blocks.size ());
+	ASSERT_EQ (1u, system.nodes[0]->gap_cache.blocks.size ());
 	system.nodes[0]->block_processor.add (open, std::chrono::steady_clock::now ());
 	system.nodes[0]->block_processor.flush ();
-	ASSERT_EQ (2, system.nodes[0]->gap_cache.blocks.size ());
+	ASSERT_EQ (2u, system.nodes[0]->gap_cache.blocks.size ());
 	system.nodes[0]->block_processor.add (send1, std::chrono::steady_clock::now ());
 	system.nodes[0]->block_processor.flush ();
-	ASSERT_EQ (0, system.nodes[0]->gap_cache.blocks.size ());
+	ASSERT_EQ (0u, system.nodes[0]->gap_cache.blocks.size ());
 	rai::transaction transaction (system.nodes[0]->store.environment, nullptr, false);
 	ASSERT_TRUE (system.nodes[0]->store.block_exists (transaction, send1->hash ()));
 	ASSERT_TRUE (system.nodes[0]->store.block_exists (transaction, send2->hash ()));
