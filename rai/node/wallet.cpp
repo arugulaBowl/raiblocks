@@ -193,7 +193,7 @@ void rai::wallet_store::derive_key (rai::raw_key & prv_a, MDB_txn * transaction_
 rai::fan::fan (rai::uint256_union const & key, size_t count_a)
 {
 	std::unique_ptr<rai::uint256_union> first (new rai::uint256_union (key));
-	for (auto i (1); i < count_a; ++i)
+	for (size_t i (1); i < count_a; ++i)
 	{
 		std::unique_ptr<rai::uint256_union> entry (new rai::uint256_union);
 		random_pool.GenerateBlock (entry->bytes.data (), entry->bytes.size ());
