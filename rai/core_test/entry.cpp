@@ -7,6 +7,7 @@ TEST (basic, basic)
 
 TEST (asan, DISABLED_memory)
 {
-	uint8_t array[1];
+	uint8_t array[1] = {0};
 	auto value (array[-0x800000]);
+	(void) value;
 }
