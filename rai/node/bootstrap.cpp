@@ -990,7 +990,7 @@ void rai::bootstrap_attempt::populate_connections ()
 		auto delta = std::min ((target - connections) * 2, bootstrap_max_new_connections);
 		// TODO - tune this better
 		// Not many peers respond, need to try to make more connections than we need.
-		for (int i = 0; i < delta; i++)
+		for (auto i = 0u; i < delta; i++)
 		{
 			auto peer (node->peers.bootstrap_peer ());
 			if (peer != rai::endpoint (boost::asio::ip::address_v6::any (), 0))
