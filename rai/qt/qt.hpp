@@ -170,8 +170,8 @@ public:
 	accounts (rai_qt::wallet &);
 	void refresh ();
 	void refresh_wallet_balance ();
-	QLabel * wallet_balance_label;
 	QWidget * window;
+	QLabel * wallet_balance_label;
 	QVBoxLayout * layout;
 	QStandardItemModel * model;
 	QTableView * view;
@@ -263,9 +263,9 @@ public:
 	stats_viewer (rai_qt::wallet &);
 	QWidget * window;
 	QVBoxLayout * layout;
-	QPushButton * refresh;
 	QStandardItemModel * model;
 	QTableView * view;
+	QPushButton * refresh;
 	QPushButton * back;
 	rai_qt::wallet & wallet;
 	void refresh_stats ();
