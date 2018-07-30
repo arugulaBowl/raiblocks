@@ -171,10 +171,10 @@ void rai::rpc::stop ()
 
 rai::rpc_handler::rpc_handler (rai::node & node_a, rai::rpc & rpc_a, std::string const & body_a, std::string const & request_id_a, std::function<void(boost::property_tree::ptree const &)> const & response_a) :
 body (body_a),
+request_id (request_id_a),
 node (node_a),
 rpc (rpc_a),
-response (response_a),
-request_id (request_id_a)
+response (response_a)
 {
 }
 
@@ -3029,7 +3029,7 @@ void rai::rpc_handler::republish ()
 		auto block (node.store.block_get (transaction, hash));
 		if (block != nullptr)
 		{
-			for (auto i (0); !hash.is_zero () && i < count; ++i)
+			for (uint64_t i (0); !hash.is_zero () && i < count; ++i)
 			{
 				block = node.store.block_get (transaction, hash);
 				if (sources != 0) // Republish source chain
@@ -4259,7 +4259,7 @@ void rai::rpc_handler::wallet_work_get ()
 				{
 					rai::account account (i->first.uint256 ());
 					uint64_t work (0);
-					auto error_work (existing->second->store.work_get (transaction, account, work));
+					existing->second->store.work_get (transaction, account, work);
 					works.put (account.to_account (), rai::to_string_hex (work));
 				}
 				response_l.add_child ("works", works);
@@ -4370,7 +4370,7 @@ void rai::rpc_handler::work_get ()
 					if (account_check != existing->second->store.end ())
 					{
 						uint64_t work (0);
-						auto error_work (existing->second->store.work_get (transaction, account, work));
+						existing->second->store.work_get (transaction, account, work);
 						boost::property_tree::ptree response_l;
 						response_l.put ("work", rai::to_string_hex (work));
 						response (response_l);
