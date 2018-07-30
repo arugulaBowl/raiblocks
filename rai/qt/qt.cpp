@@ -1505,7 +1505,7 @@ wallet (wallet_a)
 					rai::transaction transaction_l (this->wallet.wallet_m->store.environment, nullptr, true);
 					this->wallet.wallet_m->store.representative_set (transaction_l, representative_l);
 				}
-				auto block (this->wallet.wallet_m->change_sync (this->wallet.account, representative_l));
+				this->wallet.wallet_m->change_sync (this->wallet.account, representative_l);
 				change_rep->setEnabled (true);
 				show_button_success (*change_rep);
 				change_rep->setText ("Representative was changed");
