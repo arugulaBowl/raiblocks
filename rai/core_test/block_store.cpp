@@ -11,7 +11,7 @@ TEST (block_store, construction)
 	rai::block_store store (init, rai::unique_path ());
 	ASSERT_TRUE (!init);
 	auto now (rai::seconds_since_epoch ());
-	ASSERT_GT (now, 1408074640);
+	ASSERT_GT (now, 1408074640ull);
 }
 
 TEST (block_store, add_item)
@@ -224,7 +224,7 @@ TEST (unchecked, double_put)
 	store.unchecked_put (transaction, block1->previous (), block1);
 	store.unchecked_put (transaction, block1->previous (), block1);
 	auto block3 (store.unchecked_get (transaction, block1->previous ()));
-	ASSERT_EQ (block3.size (), 1);
+	ASSERT_EQ (block3.size (), 1u);
 }
 
 TEST (checksum, simple)
@@ -338,8 +338,8 @@ TEST (block_store, one_account)
 	rai::account_info info (begin->second, begin->from_secondary_store ? rai::epoch::epoch_1 : rai::epoch::epoch_0);
 	ASSERT_EQ (hash, info.head);
 	ASSERT_EQ (42, info.balance.number ());
-	ASSERT_EQ (100, info.modified);
-	ASSERT_EQ (200, info.block_count);
+	ASSERT_EQ (100u, info.modified);
+	ASSERT_EQ (200u, info.block_count);
 	++begin;
 	ASSERT_EQ (end, begin);
 }
@@ -384,16 +384,16 @@ TEST (block_store, two_account)
 	rai::account_info info1 (begin->second, begin->from_secondary_store ? rai::epoch::epoch_1 : rai::epoch::epoch_0);
 	ASSERT_EQ (hash1, info1.head);
 	ASSERT_EQ (42, info1.balance.number ());
-	ASSERT_EQ (100, info1.modified);
-	ASSERT_EQ (300, info1.block_count);
+	ASSERT_EQ (100u, info1.modified);
+	ASSERT_EQ (300u, info1.block_count);
 	++begin;
 	ASSERT_NE (end, begin);
 	ASSERT_EQ (account2, begin->first.uint256 ());
 	rai::account_info info2 (begin->second, begin->from_secondary_store ? rai::epoch::epoch_1 : rai::epoch::epoch_0);
 	ASSERT_EQ (hash2, info2.head);
 	ASSERT_EQ (84, info2.balance.number ());
-	ASSERT_EQ (200, info2.modified);
-	ASSERT_EQ (400, info2.block_count);
+	ASSERT_EQ (200u, info2.modified);
+	ASSERT_EQ (400u, info2.block_count);
 	++begin;
 	ASSERT_EQ (end, begin);
 }
@@ -535,7 +535,7 @@ TEST (block_store, block_replace)
 	store.block_put (transaction, 0, send2);
 	auto block3 (store.block_get (transaction, 0));
 	ASSERT_NE (nullptr, block3);
-	ASSERT_EQ (2, block3->block_work ());
+	ASSERT_EQ (2u, block3->block_work ());
 }
 
 TEST (block_store, block_count)
@@ -543,11 +543,11 @@ TEST (block_store, block_count)
 	bool init (false);
 	rai::block_store store (init, rai::unique_path ());
 	ASSERT_TRUE (!init);
-	ASSERT_EQ (0, store.block_count (rai::transaction (store.environment, nullptr, false)).sum ());
+	ASSERT_EQ (0u, store.block_count (rai::transaction (store.environment, nullptr, false)).sum ());
 	rai::open_block block (0, 1, 0, rai::keypair ().prv, 0, 0);
 	rai::uint256_union hash1 (block.hash ());
 	store.block_put (rai::transaction (store.environment, nullptr, true), hash1, block);
-	ASSERT_EQ (1, store.block_count (rai::transaction (store.environment, nullptr, false)).sum ());
+	ASSERT_EQ (1u, store.block_count (rai::transaction (store.environment, nullptr, false)).sum ());
 }
 
 TEST (block_store, account_count)
@@ -555,10 +555,10 @@ TEST (block_store, account_count)
 	bool init (false);
 	rai::block_store store (init, rai::unique_path ());
 	ASSERT_TRUE (!init);
-	ASSERT_EQ (0, store.account_count (rai::transaction (store.environment, nullptr, false)));
+	ASSERT_EQ (0u, store.account_count (rai::transaction (store.environment, nullptr, false)));
 	rai::account account (200);
 	store.account_put (rai::transaction (store.environment, nullptr, true), account, rai::account_info ());
-	ASSERT_EQ (1, store.account_count (rai::transaction (store.environment, nullptr, false)));
+	ASSERT_EQ (1u, store.account_count (rai::transaction (store.environment, nullptr, false)));
 }
 
 TEST (block_store, sequence_increment)
@@ -571,23 +571,23 @@ TEST (block_store, sequence_increment)
 	auto block1 (std::make_shared<rai::open_block> (0, 1, 0, rai::keypair ().prv, 0, 0));
 	rai::transaction transaction (store.environment, nullptr, true);
 	auto vote1 (store.vote_generate (transaction, key1.pub, key1.prv, block1));
-	ASSERT_EQ (1, vote1->sequence);
+	ASSERT_EQ (1u, vote1->sequence);
 	auto vote2 (store.vote_generate (transaction, key1.pub, key1.prv, block1));
-	ASSERT_EQ (2, vote2->sequence);
+	ASSERT_EQ (2u, vote2->sequence);
 	auto vote3 (store.vote_generate (transaction, key2.pub, key2.prv, block1));
-	ASSERT_EQ (1, vote3->sequence);
+	ASSERT_EQ (1u, vote3->sequence);
 	auto vote4 (store.vote_generate (transaction, key2.pub, key2.prv, block1));
-	ASSERT_EQ (2, vote4->sequence);
+	ASSERT_EQ (2u, vote4->sequence);
 	vote1->sequence = 20;
 	auto seq5 (store.vote_max (transaction, vote1));
-	ASSERT_EQ (20, seq5->sequence);
+	ASSERT_EQ (20u, seq5->sequence);
 	vote3->sequence = 30;
 	auto seq6 (store.vote_max (transaction, vote3));
-	ASSERT_EQ (30, seq6->sequence);
+	ASSERT_EQ (30u, seq6->sequence);
 	auto vote5 (store.vote_generate (transaction, key1.pub, key1.prv, block1));
-	ASSERT_EQ (21, vote5->sequence);
+	ASSERT_EQ (21u, vote5->sequence);
 	auto vote6 (store.vote_generate (transaction, key2.pub, key2.prv, block1));
-	ASSERT_EQ (31, vote6->sequence);
+	ASSERT_EQ (31u, vote6->sequence);
 }
 
 TEST (block_store, upgrade_v2_v3)
@@ -744,7 +744,7 @@ TEST (block_store, upgrade_v5_v6)
 	rai::transaction transaction (store.environment, nullptr, false);
 	rai::account_info info;
 	store.account_get (transaction, rai::test_genesis_key.pub, info);
-	ASSERT_EQ (1, info.block_count);
+	ASSERT_EQ (1u, info.block_count);
 }
 
 TEST (block_store, upgrade_v6_v7)
@@ -883,7 +883,7 @@ TEST (block_store, upgrade_v8_v9)
 	ASSERT_LT (8, store.version_get (transaction));
 	auto vote (store.vote_get (transaction, key.pub));
 	ASSERT_NE (nullptr, vote);
-	ASSERT_EQ (10, vote->sequence);
+	ASSERT_EQ (10u, vote->sequence);
 }
 
 TEST (block_store, upgrade_v9_v10)
@@ -948,11 +948,11 @@ TEST (block_store, state_block)
 	ASSERT_NE (nullptr, block2);
 	ASSERT_EQ (block1, *block2);
 	auto count (store.block_count (transaction));
-	ASSERT_EQ (1, count.state_v0);
-	ASSERT_EQ (0, count.state_v1);
+	ASSERT_EQ (1u, count.state_v0);
+	ASSERT_EQ (0u, count.state_v1);
 	store.block_del (transaction, block1.hash ());
 	ASSERT_FALSE (store.block_exists (transaction, block1.hash ()));
 	auto count2 (store.block_count (transaction));
-	ASSERT_EQ (0, count2.state_v0);
-	ASSERT_EQ (0, count2.state_v1);
+	ASSERT_EQ (0u, count2.state_v0);
+	ASSERT_EQ (0u, count2.state_v1);
 }
