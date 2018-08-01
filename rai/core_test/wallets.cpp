@@ -8,7 +8,7 @@ TEST (wallets, open_create)
 	bool error (false);
 	rai::wallets wallets (error, *system.nodes[0]);
 	ASSERT_FALSE (error);
-	ASSERT_EQ (1, wallets.items.size ()); // it starts out with a default wallet
+	ASSERT_EQ (1u, wallets.items.size ()); // it starts out with a default wallet
 	rai::uint256_union id;
 	ASSERT_EQ (nullptr, wallets.open (id));
 	auto wallet (wallets.create (id));
@@ -24,7 +24,7 @@ TEST (wallets, open_existing)
 		bool error (false);
 		rai::wallets wallets (error, *system.nodes[0]);
 		ASSERT_FALSE (error);
-		ASSERT_EQ (1, wallets.items.size ());
+		ASSERT_EQ (1u, wallets.items.size ());
 		auto wallet (wallets.create (id));
 		ASSERT_NE (nullptr, wallet);
 		ASSERT_EQ (wallet, wallets.open (id));
@@ -43,7 +43,7 @@ TEST (wallets, open_existing)
 		bool error (false);
 		rai::wallets wallets (error, *system.nodes[0]);
 		ASSERT_FALSE (error);
-		ASSERT_EQ (2, wallets.items.size ());
+		ASSERT_EQ (2u, wallets.items.size ());
 		ASSERT_NE (nullptr, wallets.open (id));
 	}
 }
@@ -56,18 +56,18 @@ TEST (wallets, remove)
 		bool error (false);
 		rai::wallets wallets (error, *system.nodes[0]);
 		ASSERT_FALSE (error);
-		ASSERT_EQ (1, wallets.items.size ());
+		ASSERT_EQ (1u, wallets.items.size ());
 		auto wallet (wallets.create (one));
 		ASSERT_NE (nullptr, wallet);
-		ASSERT_EQ (2, wallets.items.size ());
+		ASSERT_EQ (2u, wallets.items.size ());
 		wallets.destroy (one);
-		ASSERT_EQ (1, wallets.items.size ());
+		ASSERT_EQ (1u, wallets.items.size ());
 	}
 	{
 		bool error (false);
 		rai::wallets wallets (error, *system.nodes[0]);
 		ASSERT_FALSE (error);
-		ASSERT_EQ (1, wallets.items.size ());
+		ASSERT_EQ (1u, wallets.items.size ());
 	}
 }
 
