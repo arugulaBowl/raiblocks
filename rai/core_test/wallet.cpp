@@ -313,7 +313,7 @@ TEST (account, encode_zero)
 	rai::uint256_union number0 (0);
 	std::string str0;
 	number0.encode_account (str0);
-	ASSERT_EQ (64, str0.size ());
+	ASSERT_EQ (64u, str0.size ());
 	rai::uint256_union number1;
 	ASSERT_FALSE (number1.decode_account (str0));
 	ASSERT_EQ (number0, number1);
@@ -325,7 +325,7 @@ TEST (account, encode_all)
 	number0.decode_hex ("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 	std::string str0;
 	number0.encode_account (str0);
-	ASSERT_EQ (64, str0.size ());
+	ASSERT_EQ (64u, str0.size ());
 	rai::uint256_union number1;
 	ASSERT_FALSE (number1.decode_account (str0));
 	ASSERT_EQ (number0, number1);
@@ -381,7 +381,7 @@ TEST (fan, change)
 	value1.data = 1;
 	ASSERT_NE (value0, value1);
 	rai::fan fan (value0.data, 1024);
-	ASSERT_EQ (1024, fan.values.size ());
+	ASSERT_EQ (1024u, fan.values.size ());
 	rai::raw_key value2;
 	fan.value (value2);
 	ASSERT_EQ (value0, value2);
@@ -707,7 +707,7 @@ TEST (wallet, version_1_2_upgrade)
 	}
 	wallet->enter_password ("1");
 	ASSERT_TRUE (wallet->valid_password ());
-	ASSERT_EQ (2, wallet->store.version (rai::transaction (wallet->store.environment, nullptr, false)));
+	ASSERT_EQ (2u, wallet->store.version (rai::transaction (wallet->store.environment, nullptr, false)));
 	rai::raw_key prv2;
 	ASSERT_FALSE (wallet->store.fetch (rai::transaction (wallet->store.environment, nullptr, false), key.pub, prv2));
 	ASSERT_EQ (key.prv, prv2);
@@ -729,16 +729,16 @@ TEST (wallet, deterministic_keys)
 	rai::raw_key key3;
 	wallet.deterministic_key (key3, transaction, 1);
 	ASSERT_NE (key1, key3);
-	ASSERT_EQ (0, wallet.deterministic_index_get (transaction));
+	ASSERT_EQ (0u, wallet.deterministic_index_get (transaction));
 	wallet.deterministic_index_set (transaction, 1);
-	ASSERT_EQ (1, wallet.deterministic_index_get (transaction));
+	ASSERT_EQ (1u, wallet.deterministic_index_get (transaction));
 	auto key4 (wallet.deterministic_insert (transaction));
 	rai::raw_key key5;
 	ASSERT_FALSE (wallet.fetch (transaction, key4, key5));
 	ASSERT_EQ (key3, key5);
-	ASSERT_EQ (2, wallet.deterministic_index_get (transaction));
+	ASSERT_EQ (2u, wallet.deterministic_index_get (transaction));
 	wallet.deterministic_index_set (transaction, 1);
-	ASSERT_EQ (1, wallet.deterministic_index_get (transaction));
+	ASSERT_EQ (1u, wallet.deterministic_index_get (transaction));
 	wallet.erase (transaction, key4);
 	ASSERT_FALSE (wallet.exists (transaction, key4));
 	auto key8 (wallet.deterministic_insert (transaction));
@@ -747,12 +747,12 @@ TEST (wallet, deterministic_keys)
 	rai::raw_key key7;
 	ASSERT_FALSE (wallet.fetch (transaction, key6, key7));
 	ASSERT_NE (key5, key7);
-	ASSERT_EQ (3, wallet.deterministic_index_get (transaction));
+	ASSERT_EQ (3u, wallet.deterministic_index_get (transaction));
 	rai::keypair key9;
 	ASSERT_EQ (key9.pub, wallet.insert_adhoc (transaction, key9.prv));
 	ASSERT_TRUE (wallet.exists (transaction, key9.pub));
 	wallet.deterministic_clear (transaction);
-	ASSERT_EQ (0, wallet.deterministic_index_get (transaction));
+	ASSERT_EQ (0u, wallet.deterministic_index_get (transaction));
 	ASSERT_FALSE (wallet.exists (transaction, key4));
 	ASSERT_FALSE (wallet.exists (transaction, key6));
 	ASSERT_FALSE (wallet.exists (transaction, key8));
@@ -776,9 +776,9 @@ TEST (wallet, reseed)
 	wallet.seed (seed3, transaction);
 	ASSERT_EQ (seed1, seed3);
 	auto key1 (wallet.deterministic_insert (transaction));
-	ASSERT_EQ (1, wallet.deterministic_index_get (transaction));
+	ASSERT_EQ (1u, wallet.deterministic_index_get (transaction));
 	wallet.seed_set (transaction, seed2);
-	ASSERT_EQ (0, wallet.deterministic_index_get (transaction));
+	ASSERT_EQ (0u, wallet.deterministic_index_get (transaction));
 	rai::raw_key seed4;
 	wallet.seed (seed4, transaction);
 	ASSERT_EQ (seed2, seed4);
@@ -817,13 +817,13 @@ TEST (wallet, version_2_3_upgrade)
 	}
 	{
 		rai::transaction transaction (wallet->store.environment, nullptr, false);
-		ASSERT_EQ (2, wallet->store.version (transaction));
+		ASSERT_EQ (2u, wallet->store.version (transaction));
 		ASSERT_FALSE (wallet->store.exists (transaction, rai::wallet_store::deterministic_index_special));
 		ASSERT_FALSE (wallet->store.exists (transaction, rai::wallet_store::seed_special));
 		wallet->store.attempt_password (transaction, "1");
 	}
 	rai::transaction transaction (wallet->store.environment, nullptr, false);
-	ASSERT_EQ (3, wallet->store.version (transaction));
+	ASSERT_EQ (3u, wallet->store.version (transaction));
 	ASSERT_TRUE (wallet->store.exists (transaction, rai::wallet_store::deterministic_index_special));
 	ASSERT_TRUE (wallet->store.exists (transaction, rai::wallet_store::seed_special));
 	ASSERT_FALSE (wallet->deterministic_insert ().is_zero ());
@@ -836,12 +836,12 @@ TEST (wallet, no_work)
 	rai::keypair key2;
 	auto block (system.wallet (0)->send_action (rai::test_genesis_key.pub, key2.pub, std::numeric_limits<rai::uint128_t>::max (), false));
 	ASSERT_NE (nullptr, block);
-	ASSERT_NE (0, block->block_work ());
+	ASSERT_NE (0u, block->block_work ());
 	ASSERT_FALSE (rai::work_validate (block->root (), block->block_work ()));
 	rai::transaction transaction (system.nodes[0]->store.environment, nullptr, false);
 	uint64_t cached_work (0);
 	system.wallet (0)->store.work_get (transaction, rai::test_genesis_key.pub, cached_work);
-	ASSERT_EQ (0, cached_work);
+	ASSERT_EQ (0u, cached_work);
 }
 
 TEST (wallet, send_race)
