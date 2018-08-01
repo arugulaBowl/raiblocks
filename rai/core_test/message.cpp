@@ -50,7 +50,7 @@ TEST (message, publish_serialization)
 		rai::vectorstream stream (bytes);
 		publish.header.serialize (stream);
 	}
-	ASSERT_EQ (8, bytes.size ());
+	ASSERT_EQ (8u, bytes.size ());
 	ASSERT_EQ (0x52, bytes[0]);
 	ASSERT_EQ (0x41, bytes[1]);
 	ASSERT_EQ (rai::protocol_version, bytes[2]);
