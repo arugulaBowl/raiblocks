@@ -584,7 +584,7 @@ TEST (rpc, account_list)
 		ASSERT_FALSE (number.decode_account (account));
 		accounts.push_back (number);
 	}
-	ASSERT_EQ (2, accounts.size ());
+	ASSERT_EQ (2u, accounts.size ());
 	for (auto i (accounts.begin ()), j (accounts.end ()); i != j; ++i)
 	{
 		ASSERT_TRUE (system.wallet (0)->exists (*i));
@@ -773,7 +773,7 @@ TEST (rpc, chain)
 	{
 		blocks.push_back (rai::block_hash (i->second.get<std::string> ("")));
 	}
-	ASSERT_EQ (2, blocks.size ());
+	ASSERT_EQ (2u, blocks.size ());
 	ASSERT_EQ (block->hash (), blocks[0]);
 	ASSERT_EQ (genesis, blocks[1]);
 }
@@ -805,7 +805,7 @@ TEST (rpc, chain_limit)
 	{
 		blocks.push_back (rai::block_hash (i->second.get<std::string> ("")));
 	}
-	ASSERT_EQ (1, blocks.size ());
+	ASSERT_EQ (1u, blocks.size ());
 	ASSERT_EQ (block->hash (), blocks[0]);
 }
 
@@ -845,7 +845,7 @@ TEST (rpc, frontier)
 		frontier.decode_hex (i->second.get<std::string> (""));
 		frontiers[account] = frontier;
 	}
-	ASSERT_EQ (1, frontiers.erase (rai::test_genesis_key.pub));
+	ASSERT_EQ (1u, frontiers.erase (rai::test_genesis_key.pub));
 	ASSERT_EQ (source, frontiers);
 }
 
@@ -876,7 +876,7 @@ TEST (rpc, frontier_limited)
 	}
 	ASSERT_EQ (200, response.status);
 	auto & frontiers_node (response.json.get_child ("frontiers"));
-	ASSERT_EQ (100, frontiers_node.size ());
+	ASSERT_EQ (100u, frontiers_node.size ());
 }
 
 TEST (rpc, frontier_startpoint)
@@ -906,7 +906,7 @@ TEST (rpc, frontier_startpoint)
 	}
 	ASSERT_EQ (200, response.status);
 	auto & frontiers_node (response.json.get_child ("frontiers"));
-	ASSERT_EQ (1, frontiers_node.size ());
+	ASSERT_EQ (1u, frontiers_node.size ());
 	ASSERT_EQ (source.begin ()->first.to_account (), frontiers_node.begin ()->first);
 }
 
@@ -949,12 +949,12 @@ TEST (rpc, history)
 	{
 		history_l.push_back (std::make_tuple (i->second.get<std::string> ("type"), i->second.get<std::string> ("account"), i->second.get<std::string> ("amount"), i->second.get<std::string> ("hash")));
 	}
-	ASSERT_EQ (5, history_l.size ());
+	ASSERT_EQ (5u, history_l.size ());
 	ASSERT_EQ ("receive", std::get<0> (history_l[0]));
 	ASSERT_EQ (ureceive.hash ().to_string (), std::get<3> (history_l[0]));
 	ASSERT_EQ (rai::test_genesis_key.pub.to_account (), std::get<1> (history_l[0]));
 	ASSERT_EQ (rai::Gxrb_ratio.convert_to<std::string> (), std::get<2> (history_l[0]));
-	ASSERT_EQ (5, history_l.size ());
+	ASSERT_EQ (5u, history_l.size ());
 	ASSERT_EQ ("send", std::get<0> (history_l[1]));
 	ASSERT_EQ (usend.hash ().to_string (), std::get<3> (history_l[1]));
 	ASSERT_EQ (rai::test_genesis_key.pub.to_account (), std::get<1> (history_l[1]));
@@ -996,7 +996,7 @@ TEST (rpc, history_count)
 	}
 	ASSERT_EQ (200, response.status);
 	auto & history_node (response.json.get_child ("history"));
-	ASSERT_EQ (1, history_node.size ());
+	ASSERT_EQ (1u, history_node.size ());
 }
 
 TEST (rpc, process_block)
@@ -1098,7 +1098,7 @@ TEST (rpc, keepalive)
 	request.put ("address", address);
 	request.put ("port", port);
 	ASSERT_FALSE (system.nodes[0]->peers.known_peer (node1->network.endpoint ()));
-	ASSERT_EQ (0, system.nodes[0]->peers.size ());
+	ASSERT_EQ (0u, system.nodes[0]->peers.size ());
 	test_response response (request, rpc, system.service);
 	while (response.status == 0)
 	{
@@ -1108,7 +1108,7 @@ TEST (rpc, keepalive)
 	auto iterations (0);
 	while (!system.nodes[0]->peers.known_peer (node1->network.endpoint ()))
 	{
-		ASSERT_EQ (0, system.nodes[0]->peers.size ());
+		ASSERT_EQ (0u, system.nodes[0]->peers.size ());
 		system.poll ();
 		++iterations;
 		ASSERT_LT (iterations, 200);
@@ -1167,7 +1167,7 @@ TEST (rpc, payment_begin_end)
 	while (!rai::work_validate (root1, work))
 	{
 		++work;
-		ASSERT_LT (work, 50);
+		ASSERT_LT (work, 50u);
 	}
 	while (rai::work_validate (root1, work))
 	{
@@ -1375,7 +1375,7 @@ TEST (rpc, peers)
 	}
 	ASSERT_EQ (200, response.status);
 	auto & peers_node (response.json.get_child ("peers"));
-	ASSERT_EQ (2, peers_node.size ());
+	ASSERT_EQ (2u, peers_node.size ());
 }
 
 TEST (rpc, pending)
@@ -1397,7 +1397,7 @@ TEST (rpc, pending)
 	}
 	ASSERT_EQ (200, response.status);
 	auto & blocks_node (response.json.get_child ("blocks"));
-	ASSERT_EQ (1, blocks_node.size ());
+	ASSERT_EQ (1u, blocks_node.size ());
 	rai::block_hash hash1 (blocks_node.begin ()->second.get<std::string> (""));
 	ASSERT_EQ (block1->hash (), hash1);
 	request.put ("threshold", "100"); // Threshold test
@@ -1408,7 +1408,7 @@ TEST (rpc, pending)
 	}
 	ASSERT_EQ (200, response0.status);
 	blocks_node = response0.json.get_child ("blocks");
-	ASSERT_EQ (1, blocks_node.size ());
+	ASSERT_EQ (1u, blocks_node.size ());
 	std::unordered_map<rai::block_hash, rai::uint128_union> blocks;
 	for (auto i (blocks_node.begin ()), j (blocks_node.end ()); i != j; ++i)
 	{
@@ -1431,7 +1431,7 @@ TEST (rpc, pending)
 	}
 	ASSERT_EQ (200, response1.status);
 	blocks_node = response1.json.get_child ("blocks");
-	ASSERT_EQ (0, blocks_node.size ());
+	ASSERT_EQ (0u, blocks_node.size ());
 	request.put ("threshold", "0");
 	request.put ("source", "true");
 	request.put ("min_version", "true");
@@ -1442,7 +1442,7 @@ TEST (rpc, pending)
 	}
 	ASSERT_EQ (200, response2.status);
 	blocks_node = response2.json.get_child ("blocks");
-	ASSERT_EQ (1, blocks_node.size ());
+	ASSERT_EQ (1u, blocks_node.size ());
 	std::unordered_map<rai::block_hash, rai::uint128_union> amounts;
 	std::unordered_map<rai::block_hash, rai::account> sources;
 	for (auto i (blocks_node.begin ()), j (blocks_node.end ()); i != j; ++i)
@@ -2010,7 +2010,7 @@ TEST (rpc, representatives)
 		ASSERT_FALSE (account.decode_account (i->first));
 		representatives.push_back (account);
 	}
-	ASSERT_EQ (1, representatives.size ());
+	ASSERT_EQ (1u, representatives.size ());
 	ASSERT_EQ (rai::genesis_account, representatives[0]);
 }
 
@@ -2065,7 +2065,7 @@ TEST (rpc, wallet_frontiers)
 	{
 		frontiers.push_back (rai::block_hash (i->second.get<std::string> ("")));
 	}
-	ASSERT_EQ (1, frontiers.size ());
+	ASSERT_EQ (1u, frontiers.size ());
 	ASSERT_EQ (system0.nodes[0]->latest (rai::genesis_account), frontiers[0]);
 }
 
@@ -2132,7 +2132,7 @@ TEST (rpc, successors)
 	{
 		blocks.push_back (rai::block_hash (i->second.get<std::string> ("")));
 	}
-	ASSERT_EQ (2, blocks.size ());
+	ASSERT_EQ (2u, blocks.size ());
 	ASSERT_EQ (genesis, blocks[0]);
 	ASSERT_EQ (block->hash (), blocks[1]);
 }
@@ -2195,7 +2195,7 @@ TEST (rpc, republish)
 	{
 		blocks.push_back (rai::block_hash (i->second.get<std::string> ("")));
 	}
-	ASSERT_EQ (1, blocks.size ());
+	ASSERT_EQ (1u, blocks.size ());
 	ASSERT_EQ (send.hash (), blocks[0]);
 
 	request.put ("hash", genesis.hash ().to_string ());
@@ -2212,7 +2212,7 @@ TEST (rpc, republish)
 	{
 		blocks.push_back (rai::block_hash (i->second.get<std::string> ("")));
 	}
-	ASSERT_EQ (1, blocks.size ());
+	ASSERT_EQ (1u, blocks.size ());
 	ASSERT_EQ (genesis.hash (), blocks[0]);
 
 	request.put ("hash", open.hash ().to_string ());
@@ -2229,7 +2229,7 @@ TEST (rpc, republish)
 	{
 		blocks.push_back (rai::block_hash (i->second.get<std::string> ("")));
 	}
-	ASSERT_EQ (3, blocks.size ());
+	ASSERT_EQ (3u, blocks.size ());
 	ASSERT_EQ (genesis.hash (), blocks[0]);
 	ASSERT_EQ (send.hash (), blocks[1]);
 	ASSERT_EQ (open.hash (), blocks[2]);
@@ -2594,7 +2594,7 @@ TEST (rpc, wallet_pending)
 	}
 	ASSERT_EQ (200, response1.status);
 	auto & pending1 (response1.json.get_child ("blocks"));
-	ASSERT_EQ (0, pending1.size ());
+	ASSERT_EQ (0u, pending1.size ());
 	request.put ("threshold", "0");
 	request.put ("source", "true");
 	request.put ("min_version", "true");
@@ -2800,7 +2800,7 @@ TEST (rpc, wallet_republish)
 	{
 		blocks.push_back (rai::block_hash (i->second.get<std::string> ("")));
 	}
-	ASSERT_EQ (2, blocks.size ());
+	ASSERT_EQ (2u, blocks.size ());
 	ASSERT_EQ (send.hash (), blocks[0]);
 	ASSERT_EQ (open.hash (), blocks[1]);
 }
@@ -2834,7 +2834,7 @@ TEST (rpc, delegators)
 	{
 		delegators.put ((i->first), (i->second.get<std::string> ("")));
 	}
-	ASSERT_EQ (2, delegators.size ());
+	ASSERT_EQ (2u, delegators.size ());
 	ASSERT_EQ ("100", delegators.get<std::string> (rai::test_genesis_key.pub.to_account ()));
 	ASSERT_EQ ("340282366920938463463374607431768211355", delegators.get<std::string> (key.pub.to_account ()));
 }
@@ -3016,7 +3016,7 @@ TEST (rpc, work_peers_all)
 	{
 		peers.push_back (i->second.get<std::string> (""));
 	}
-	ASSERT_EQ (1, peers.size ());
+	ASSERT_EQ (1u, peers.size ());
 	ASSERT_EQ ("::1:0", peers[0]);
 	boost::property_tree::ptree request2;
 	request2.put ("action", "work_peers_clear");
@@ -3035,7 +3035,7 @@ TEST (rpc, work_peers_all)
 	}
 	ASSERT_EQ (200, response3.status);
 	peers_node = response3.json.get_child ("work_peers");
-	ASSERT_EQ (0, peers_node.size ());
+	ASSERT_EQ (0u, peers_node.size ());
 }
 
 TEST (rpc, block_count_type)
@@ -3162,7 +3162,7 @@ TEST (rpc, accounts_create)
 		ASSERT_FALSE (account.decode_account (account_text));
 		ASSERT_TRUE (system.wallet (0)->exists (account));
 	}
-	ASSERT_EQ (8, accounts.size ());
+	ASSERT_EQ (8u, accounts.size ());
 }
 
 TEST (rpc, block_create)
