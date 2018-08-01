@@ -87,7 +87,7 @@ TEST (work, opencl_config)
 	config1.serialize_json (tree);
 	rai::opencl_config config2;
 	ASSERT_FALSE (config2.deserialize_json (tree));
-	ASSERT_EQ (1, config2.platform);
-	ASSERT_EQ (2, config2.device);
-	ASSERT_EQ (3, config2.threads);
+	ASSERT_EQ (1u, config2.platform);
+	ASSERT_EQ (2u, config2.device);
+	ASSERT_EQ (3u, config2.threads);
 }
