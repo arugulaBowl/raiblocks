@@ -38,14 +38,14 @@ TEST (network, tcp_connection)
 	{
 		service.poll ();
 	}
-	ASSERT_EQ (0, message1.size ());
-	ASSERT_EQ (0, message2.size ());
+	ASSERT_EQ (0u, message1.size ());
+	ASSERT_EQ (0u, message2.size ());
 }
 
 TEST (network, construction)
 {
 	rai::system system (24000, 1);
-	ASSERT_EQ (1, system.nodes.size ());
+	ASSERT_EQ (1u, system.nodes.size ());
 	ASSERT_EQ (24000, system.nodes[0]->network.socket.local_endpoint ().port ());
 }
 
@@ -53,24 +53,24 @@ TEST (network, self_discard)
 {
 	rai::system system (24000, 1);
 	system.nodes[0]->network.remote = system.nodes[0]->network.endpoint ();
-	ASSERT_EQ (0, system.nodes[0]->stats.count (rai::stat::type::error, rai::stat::detail::bad_sender));
+	ASSERT_EQ (0u, system.nodes[0]->stats.count (rai::stat::type::error, rai::stat::detail::bad_sender));
 	system.nodes[0]->network.receive_action (boost::system::error_code{}, 0);
-	ASSERT_EQ (1, system.nodes[0]->stats.count (rai::stat::type::error, rai::stat::detail::bad_sender));
+	ASSERT_EQ (1u, system.nodes[0]->stats.count (rai::stat::type::error, rai::stat::detail::bad_sender));
 }
 
 TEST (network, send_node_id_handshake)
 {
 	rai::system system (24000, 1);
 	auto list1 (system.nodes[0]->peers.list ());
-	ASSERT_EQ (0, list1.size ());
+	ASSERT_EQ (0u, list1.size ());
 	rai::node_init init1;
 	auto node1 (std::make_shared<rai::node> (init1, system.service, 24001, rai::unique_path (), system.alarm, system.logging, system.work));
 	node1->start ();
 	auto initial (system.nodes[0]->stats.count (rai::stat::type::message, rai::stat::detail::node_id_handshake, rai::stat::dir::in));
 	auto initial_node1 (node1->stats.count (rai::stat::type::message, rai::stat::detail::node_id_handshake, rai::stat::dir::in));
 	system.nodes[0]->network.send_keepalive (node1->network.endpoint ());
-	ASSERT_EQ (0, system.nodes[0]->peers.list ().size ());
-	ASSERT_EQ (0, node1->peers.list ().size ());
+	ASSERT_EQ (0u, system.nodes[0]->peers.list ().size ());
+	ASSERT_EQ (0u, node1->peers.list ().size ());
 	auto iterations (0);
 	while (node1->stats.count (rai::stat::type::message, rai::stat::detail::node_id_handshake, rai::stat::dir::in) == initial_node1)
 	{
@@ -78,8 +78,8 @@ TEST (network, send_node_id_handshake)
 		++iterations;
 		ASSERT_LT (iterations, 200);
 	}
-	ASSERT_EQ (0, system.nodes[0]->peers.list ().size ());
-	ASSERT_EQ (1, node1->peers.list ().size ());
+	ASSERT_EQ (0u, system.nodes[0]->peers.list ().size ());
+	ASSERT_EQ (1u, node1->peers.list ().size ());
 	iterations = 0;
 	while (system.nodes[0]->stats.count (rai::stat::type::message, rai::stat::detail::node_id_handshake, rai::stat::dir::in) < initial + 2)
 	{
@@ -89,8 +89,8 @@ TEST (network, send_node_id_handshake)
 	}
 	auto peers1 (system.nodes[0]->peers.list ());
 	auto peers2 (node1->peers.list ());
-	ASSERT_EQ (1, peers1.size ());
-	ASSERT_EQ (1, peers2.size ());
+	ASSERT_EQ (1u, peers1.size ());
+	ASSERT_EQ (1u, peers2.size ());
 	ASSERT_EQ (node1->network.endpoint (), peers1[0]);
 	ASSERT_EQ (system.nodes[0]->network.endpoint (), peers2[0]);
 	node1->stop ();
@@ -100,7 +100,7 @@ TEST (network, keepalive_ipv4)
 {
 	rai::system system (24000, 1);
 	auto list1 (system.nodes[0]->peers.list ());
-	ASSERT_EQ (0, list1.size ());
+	ASSERT_EQ (0u, list1.size ());
 	rai::node_init init1;
 	auto node1 (std::make_shared<rai::node> (init1, system.service, 24001, rai::unique_path (), system.alarm, system.logging, system.work));
 	node1->start ();
@@ -120,15 +120,15 @@ TEST (network, multi_keepalive)
 {
 	rai::system system (24000, 1);
 	auto list1 (system.nodes[0]->peers.list ());
-	ASSERT_EQ (0, list1.size ());
+	ASSERT_EQ (0u, list1.size ());
 	rai::node_init init1;
 	auto node1 (std::make_shared<rai::node> (init1, system.service, 24001, rai::unique_path (), system.alarm, system.logging, system.work));
 	ASSERT_FALSE (init1.error ());
 	node1->start ();
-	ASSERT_EQ (0, node1->peers.size ());
+	ASSERT_EQ (0u, node1->peers.size ());
 	node1->network.send_keepalive (system.nodes[0]->network.endpoint ());
-	ASSERT_EQ (0, node1->peers.size ());
-	ASSERT_EQ (0, system.nodes[0]->peers.size ());
+	ASSERT_EQ (0u, node1->peers.size ());
+	ASSERT_EQ (0u, system.nodes[0]->peers.size ());
 	auto iterations1 (0);
 	while (system.nodes[0]->peers.size () != 1)
 	{
@@ -263,7 +263,7 @@ TEST (network, send_insufficient_work)
 	}
 	auto node1 (system.nodes[1]->shared ());
 	system.nodes[0]->network.send_buffer (bytes->data (), bytes->size (), system.nodes[1]->network.endpoint (), [bytes, node1](boost::system::error_code const & ec, size_t size) {});
-	ASSERT_EQ (0, system.nodes[0]->stats.count (rai::stat::type::error, rai::stat::detail::insufficient_work));
+	ASSERT_EQ (0u, system.nodes[0]->stats.count (rai::stat::type::error, rai::stat::detail::insufficient_work));
 	auto iterations (0);
 	while (system.nodes[1]->stats.count (rai::stat::type::error, rai::stat::detail::insufficient_work) == 0)
 	{
@@ -271,7 +271,7 @@ TEST (network, send_insufficient_work)
 		++iterations;
 		ASSERT_LT (iterations, 200);
 	}
-	ASSERT_EQ (1, system.nodes[1]->stats.count (rai::stat::type::error, rai::stat::detail::insufficient_work));
+	ASSERT_EQ (1u, system.nodes[1]->stats.count (rai::stat::type::error, rai::stat::detail::insufficient_work));
 }
 
 TEST (receivable_processor, confirm_insufficient_pos)
@@ -568,7 +568,7 @@ TEST (bootstrap_processor, process_one)
 		++iterations;
 		ASSERT_LT (iterations, 200);
 	}
-	ASSERT_EQ (0, node1->active.roots.size ());
+	ASSERT_EQ (0u, node1->active.roots.size ());
 	node1->stop ();
 }
 
@@ -625,7 +625,7 @@ TEST (bootstrap_processor, process_state)
 		++iterations;
 		ASSERT_LT (iterations, 200);
 	}
-	ASSERT_EQ (0, node1->active.roots.size ());
+	ASSERT_EQ (0u, node1->active.roots.size ());
 	node1->stop ();
 }
 
@@ -882,7 +882,7 @@ TEST (network, ipv6)
 		rai::vectorstream stream (bytes1);
 		rai::write (stream, address.to_bytes ());
 	}
-	ASSERT_EQ (16, bytes1.size ());
+	ASSERT_EQ (16u, bytes1.size ());
 	for (auto i (bytes1.begin ()), n (bytes1.begin () + 10); i != n; ++i)
 	{
 		ASSERT_EQ (0, *i);
@@ -915,7 +915,7 @@ TEST (network, ipv6_bind_send_ipv4)
 	boost::asio::ip::udp::socket socket1 (service, endpoint1);
 	socket1.async_receive_from (boost::asio::buffer (bytes1.data (), bytes1.size ()), endpoint3, [&finish1](boost::system::error_code const & error, size_t size_a) {
 		ASSERT_FALSE (error);
-		ASSERT_EQ (16, size_a);
+		ASSERT_EQ (16u, size_a);
 		finish1 = true;
 	});
 	boost::asio::ip::udp::socket socket2 (service, endpoint2);
@@ -923,7 +923,7 @@ TEST (network, ipv6_bind_send_ipv4)
 	rai::endpoint endpoint6 (boost::asio::ip::address_v6::v4_mapped (boost::asio::ip::address_v4::loopback ()), 24001);
 	socket2.async_send_to (boost::asio::buffer (std::array<uint8_t, 16>{}, 16), endpoint5, [](boost::system::error_code const & error, size_t size_a) {
 		ASSERT_FALSE (error);
-		ASSERT_EQ (16, size_a);
+		ASSERT_EQ (16u, size_a);
 	});
 	auto iterations (0);
 	while (!finish1)
@@ -934,15 +934,14 @@ TEST (network, ipv6_bind_send_ipv4)
 	}
 	ASSERT_EQ (endpoint6, endpoint3);
 	std::array<uint8_t, 16> bytes2;
-	auto finish2 (false);
 	rai::endpoint endpoint4;
 	socket2.async_receive_from (boost::asio::buffer (bytes2.data (), bytes2.size ()), endpoint4, [](boost::system::error_code const & error, size_t size_a) {
 		ASSERT_FALSE (!error);
-		ASSERT_EQ (16, size_a);
+		ASSERT_EQ (16u, size_a);
 	});
 	socket1.async_send_to (boost::asio::buffer (std::array<uint8_t, 16>{}, 16), endpoint6, [](boost::system::error_code const & error, size_t size_a) {
 		ASSERT_FALSE (error);
-		ASSERT_EQ (16, size_a);
+		ASSERT_EQ (16u, size_a);
 	});
 }
 
