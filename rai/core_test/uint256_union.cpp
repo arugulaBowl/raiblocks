@@ -356,9 +356,9 @@ TEST (uint256_union, account_encode_lex)
 	rai::uint256_union min ("0000000000000000000000000000000000000000000000000000000000000000");
 	rai::uint256_union max ("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 	auto min_text (min.to_account ());
-	ASSERT_EQ (64, min_text.size ());
+	ASSERT_EQ (64u, min_text.size ());
 	auto max_text (max.to_account ());
-	ASSERT_EQ (64, max_text.size ());
+	ASSERT_EQ (64u, max_text.size ());
 	auto previous (min_text);
 	for (auto i (1); i != 1000; ++i)
 	{
@@ -485,7 +485,7 @@ TEST (uint64_t, parse)
 {
 	uint64_t value0 (1);
 	ASSERT_FALSE (rai::from_string_hex ("0", value0));
-	ASSERT_EQ (0, value0);
+	ASSERT_EQ (0u, value0);
 	uint64_t value1 (1);
 	ASSERT_FALSE (rai::from_string_hex ("ffffffffffffffff", value1));
 	ASSERT_EQ (0xffffffffffffffffULL, value1);
