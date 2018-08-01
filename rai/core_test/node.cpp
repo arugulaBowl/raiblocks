@@ -39,7 +39,7 @@ TEST (node, password_fanout)
 	config.password_fanout = 10;
 	auto node (std::make_shared<rai::node> (init, *service, path, alarm, config, work));
 	auto wallet (node->wallets.create (100));
-	ASSERT_EQ (10, wallet->store.password.values.size ());
+	ASSERT_EQ (10u, wallet->store.password.values.size ());
 	node->stop ();
 }
 
@@ -280,13 +280,13 @@ TEST (node, receive_gap)
 {
 	rai::system system (24000, 1);
 	auto & node1 (*system.nodes[0]);
-	ASSERT_EQ (0, node1.gap_cache.blocks.size ());
+	ASSERT_EQ (0u, node1.gap_cache.blocks.size ());
 	auto block (std::make_shared<rai::send_block> (5, 1, 2, rai::keypair ().prv, 4, 0));
 	node1.work_generate_blocking (*block);
 	rai::confirm_req message (block);
 	node1.process_message (message, node1.network.endpoint ());
 	node1.block_processor.flush ();
-	ASSERT_EQ (1, node1.gap_cache.blocks.size ());
+	ASSERT_EQ (1u, node1.gap_cache.blocks.size ());
 }
 
 TEST (node, merge_peers)
@@ -296,7 +296,7 @@ TEST (node, merge_peers)
 	endpoints.fill (rai::endpoint (boost::asio::ip::address_v6::loopback (), 24000));
 	endpoints[0] = rai::endpoint (boost::asio::ip::address_v6::loopback (), 24001);
 	system.nodes[0]->network.merge_peers (endpoints);
-	ASSERT_EQ (0, system.nodes[0]->peers.peers.size ());
+	ASSERT_EQ (0u, system.nodes[0]->peers.peers.size ());
 }
 
 TEST (node, search_pending)
@@ -619,11 +619,11 @@ TEST (node_config, v2_v3_upgrade)
 	config1.deserialize_json (upgraded, tree);
 	//ASSERT_EQ (rai::uint128_union (0).to_string_dec (), tree.get<std::string> ("inactive_supply"));
 	ASSERT_EQ ("1024", tree.get<std::string> ("password_fanout"));
-	ASSERT_NE (0, std::stoul (tree.get<std::string> ("password_fanout")));
-	ASSERT_NE (0, std::stoul (tree.get<std::string> ("password_fanout")));
+	ASSERT_NE (0u, std::stoul (tree.get<std::string> ("password_fanout")));
+	ASSERT_NE (0u, std::stoul (tree.get<std::string> ("password_fanout")));
 	ASSERT_TRUE (upgraded);
 	auto version (tree.get<std::string> ("version"));
-	ASSERT_GT (std::stoull (version), 2);
+	ASSERT_GT (std::stoull (version), 2u);
 }
 
 TEST (node, confirm_locked)
@@ -663,13 +663,13 @@ TEST (node, fork_publish)
 		node1.work_generate_blocking (*send2);
 		node1.process_active (send1);
 		node1.block_processor.flush ();
-		ASSERT_EQ (1, node1.active.roots.size ());
+		ASSERT_EQ (1u, node1.active.roots.size ());
 		auto existing (node1.active.roots.find (send1->root ()));
 		ASSERT_NE (node1.active.roots.end (), existing);
 		auto election (existing->election);
 		rai::transaction transaction (node1.store.environment, nullptr, false);
 		election->compute_rep_votes (transaction);
-		ASSERT_EQ (2, election->votes.rep_votes.size ());
+		ASSERT_EQ (2u, election->votes.rep_votes.size ());
 		node1.process_active (send2);
 		node1.block_processor.flush ();
 		auto existing1 (election->votes.rep_votes.find (rai::test_genesis_key.pub));
@@ -687,7 +687,7 @@ TEST (node, fork_keep)
 	rai::system system (24000, 2);
 	auto & node1 (*system.nodes[0]);
 	auto & node2 (*system.nodes[1]);
-	ASSERT_EQ (1, node1.peers.size ());
+	ASSERT_EQ (1u, node1.peers.size ());
 	system.wallet (0)->insert_adhoc (rai::test_genesis_key.prv);
 	rai::keypair key1;
 	rai::keypair key2;
@@ -699,8 +699,8 @@ TEST (node, fork_keep)
 	node1.block_processor.flush ();
 	node2.process_active (send1);
 	node2.block_processor.flush ();
-	ASSERT_EQ (1, node1.active.roots.size ());
-	ASSERT_EQ (1, node2.active.roots.size ());
+	ASSERT_EQ (1u, node1.active.roots.size ());
+	ASSERT_EQ (1u, node2.active.roots.size ());
 	node1.process_active (send2);
 	node1.block_processor.flush ();
 	node2.process_active (send2);
@@ -709,7 +709,7 @@ TEST (node, fork_keep)
 	ASSERT_NE (node2.active.roots.end (), conflict);
 	auto votes1 (conflict->election);
 	ASSERT_NE (nullptr, votes1);
-	ASSERT_EQ (1, votes1->votes.rep_votes.size ());
+	ASSERT_EQ (1u, votes1->votes.rep_votes.size ());
 	{
 		rai::transaction transaction0 (system.nodes[0]->store.environment, nullptr, false);
 		rai::transaction transaction1 (system.nodes[1]->store.environment, nullptr, false);
@@ -739,7 +739,7 @@ TEST (node, fork_flip)
 	rai::system system (24000, 2);
 	auto & node1 (*system.nodes[0]);
 	auto & node2 (*system.nodes[1]);
-	ASSERT_EQ (1, node1.peers.size ());
+	ASSERT_EQ (1u, node1.peers.size ());
 	system.wallet (0)->insert_adhoc (rai::test_genesis_key.prv);
 	rai::keypair key1;
 	rai::genesis genesis;
@@ -752,8 +752,8 @@ TEST (node, fork_flip)
 	node1.block_processor.flush ();
 	node2.process_message (publish2, node1.network.endpoint ());
 	node2.block_processor.flush ();
-	ASSERT_EQ (1, node1.active.roots.size ());
-	ASSERT_EQ (1, node2.active.roots.size ());
+	ASSERT_EQ (1u, node1.active.roots.size ());
+	ASSERT_EQ (1u, node2.active.roots.size ());
 	node1.process_message (publish2, node1.network.endpoint ());
 	node1.block_processor.flush ();
 	node2.process_message (publish1, node2.network.endpoint ());
@@ -762,7 +762,7 @@ TEST (node, fork_flip)
 	ASSERT_NE (node2.active.roots.end (), conflict);
 	auto votes1 (conflict->election);
 	ASSERT_NE (nullptr, votes1);
-	ASSERT_EQ (1, votes1->votes.rep_votes.size ());
+	ASSERT_EQ (1u, votes1->votes.rep_votes.size ());
 	{
 		rai::transaction transaction (system.nodes[0]->store.environment, nullptr, false);
 		ASSERT_TRUE (node1.store.block_exists (transaction, publish1.block->hash ()));
@@ -792,7 +792,7 @@ TEST (node, fork_multi_flip)
 	rai::system system (24000, 2);
 	auto & node1 (*system.nodes[0]);
 	auto & node2 (*system.nodes[1]);
-	ASSERT_EQ (1, node1.peers.size ());
+	ASSERT_EQ (1u, node1.peers.size ());
 	system.wallet (0)->insert_adhoc (rai::test_genesis_key.prv);
 	rai::keypair key1;
 	rai::genesis genesis;
@@ -808,8 +808,8 @@ TEST (node, fork_multi_flip)
 	node2.process_message (publish2, node2.network.endpoint ());
 	node2.process_message (publish3, node2.network.endpoint ());
 	node2.block_processor.flush ();
-	ASSERT_EQ (1, node1.active.roots.size ());
-	ASSERT_EQ (2, node2.active.roots.size ());
+	ASSERT_EQ (1u, node1.active.roots.size ());
+	ASSERT_EQ (2u, node2.active.roots.size ());
 	node1.process_message (publish2, node1.network.endpoint ());
 	node1.process_message (publish3, node1.network.endpoint ());
 	node1.block_processor.flush ();
@@ -819,7 +819,7 @@ TEST (node, fork_multi_flip)
 	ASSERT_NE (node2.active.roots.end (), conflict);
 	auto votes1 (conflict->election);
 	ASSERT_NE (nullptr, votes1);
-	ASSERT_EQ (1, votes1->votes.rep_votes.size ());
+	ASSERT_EQ (1u, votes1->votes.rep_votes.size ());
 	{
 		rai::transaction transaction (system.nodes[0]->store.environment, nullptr, false);
 		ASSERT_TRUE (node1.store.block_exists (transaction, publish1.block->hash ()));
@@ -909,7 +909,7 @@ TEST (node, fork_open)
 	node1.block_processor.flush ();
 	auto open2 (std::make_shared<rai::open_block> (publish1.block->hash (), 2, key1.pub, key1.prv, key1.pub, system.work.generate (key1.pub)));
 	rai::publish publish3 (open2);
-	ASSERT_EQ (2, node1.active.roots.size ());
+	ASSERT_EQ (2u, node1.active.roots.size ());
 	node1.process_message (publish3, node1.network.endpoint ());
 	node1.block_processor.flush ();
 }
@@ -919,7 +919,7 @@ TEST (node, fork_open_flip)
 	rai::system system (24000, 2);
 	auto & node1 (*system.nodes[0]);
 	auto & node2 (*system.nodes[1]);
-	ASSERT_EQ (1, node1.peers.size ());
+	ASSERT_EQ (1u, node1.peers.size ());
 	system.wallet (0)->insert_adhoc (rai::test_genesis_key.prv);
 	rai::keypair key1;
 	rai::genesis genesis;
@@ -939,8 +939,8 @@ TEST (node, fork_open_flip)
 	// node2 gets copy that will be evicted
 	node2.process_active (open2);
 	node2.block_processor.flush ();
-	ASSERT_EQ (2, node1.active.roots.size ());
-	ASSERT_EQ (2, node2.active.roots.size ());
+	ASSERT_EQ (2u, node1.active.roots.size ());
+	ASSERT_EQ (2u, node2.active.roots.size ());
 	// Notify both nodes that a fork exists
 	node1.process_active (open2);
 	node1.block_processor.flush ();
@@ -950,7 +950,7 @@ TEST (node, fork_open_flip)
 	ASSERT_NE (node2.active.roots.end (), conflict);
 	auto votes1 (conflict->election);
 	ASSERT_NE (nullptr, votes1);
-	ASSERT_EQ (1, votes1->votes.rep_votes.size ());
+	ASSERT_EQ (1u, votes1->votes.rep_votes.size ());
 	ASSERT_TRUE (node1.block (open1->hash ()) != nullptr);
 	ASSERT_TRUE (node2.block (open2->hash ()) != nullptr);
 	auto iterations (0);
@@ -1236,7 +1236,7 @@ TEST (node, rep_self_vote)
 	rai::transaction transaction (node0->store.environment, nullptr, false);
 	existing->election->compute_rep_votes (transaction);
 	auto & rep_votes (existing->election->votes.rep_votes);
-	ASSERT_EQ (3, rep_votes.size ());
+	ASSERT_EQ (3u, rep_votes.size ());
 	ASSERT_NE (rep_votes.end (), rep_votes.find (rai::test_genesis_key.pub));
 	ASSERT_NE (rep_votes.end (), rep_votes.find (rep_big.pub));
 }
@@ -1387,7 +1387,7 @@ TEST (node, rep_list)
 	rai::keypair key1;
 	// Broadcast a confirm so others should know this is a rep node
 	wallet0->send_action (rai::test_genesis_key.pub, key1.pub, rai::Mxrb_ratio);
-	ASSERT_EQ (0, node1.peers.representatives (1).size ());
+	ASSERT_EQ (0u, node1.peers.representatives (1).size ());
 	auto iterations (0);
 	auto done (false);
 	while (!done)
@@ -1431,7 +1431,7 @@ TEST (node, no_voting)
 		++iterations;
 		ASSERT_GT (200, iterations);
 	}
-	ASSERT_EQ (0, node1.stats.count (rai::stat::type::message, rai::stat::detail::confirm_ack, rai::stat::dir::in));
+	ASSERT_EQ (0u, node1.stats.count (rai::stat::type::message, rai::stat::detail::confirm_ack, rai::stat::dir::in));
 }
 
 TEST (node, start_observer)
@@ -1546,19 +1546,19 @@ TEST (node, DISABLED_bootstrap_connection_scaling)
 	node1.bootstrap_initiator.bootstrap ();
 	auto attempt (node1.bootstrap_initiator.current_attempt ());
 	ASSERT_NE (nullptr, attempt);
-	ASSERT_EQ (34, attempt->target_connections (25000));
-	ASSERT_EQ (4, attempt->target_connections (0));
-	ASSERT_EQ (64, attempt->target_connections (50000));
-	ASSERT_EQ (64, attempt->target_connections (10000000000));
+	ASSERT_EQ (34u, attempt->target_connections (25000));
+	ASSERT_EQ (4u, attempt->target_connections (0));
+	ASSERT_EQ (64u, attempt->target_connections (50000));
+	ASSERT_EQ (64u, attempt->target_connections (10000000000));
 	node1.config.bootstrap_connections = 128;
-	ASSERT_EQ (64, attempt->target_connections (0));
-	ASSERT_EQ (64, attempt->target_connections (50000));
+	ASSERT_EQ (64u, attempt->target_connections (0));
+	ASSERT_EQ (64u, attempt->target_connections (50000));
 	node1.config.bootstrap_connections_max = 256;
-	ASSERT_EQ (128, attempt->target_connections (0));
-	ASSERT_EQ (256, attempt->target_connections (50000));
+	ASSERT_EQ (128u, attempt->target_connections (0));
+	ASSERT_EQ (256u, attempt->target_connections (50000));
 	node1.config.bootstrap_connections_max = 0;
-	ASSERT_EQ (1, attempt->target_connections (0));
-	ASSERT_EQ (1, attempt->target_connections (50000));
+	ASSERT_EQ (1u, attempt->target_connections (0));
+	ASSERT_EQ (1u, attempt->target_connections (50000));
 }
 
 // Test stat counting at both type and detail levels
@@ -1572,9 +1572,9 @@ TEST (node, stat_counting)
 	node1.stats.inc (rai::stat::type::ledger, rai::stat::detail::send, rai::stat::dir::in);
 	node1.stats.inc (rai::stat::type::ledger, rai::stat::detail::send, rai::stat::dir::in);
 	node1.stats.inc (rai::stat::type::ledger, rai::stat::detail::receive, rai::stat::dir::in);
-	ASSERT_EQ (10, node1.stats.count (rai::stat::type::ledger, rai::stat::dir::in));
-	ASSERT_EQ (2, node1.stats.count (rai::stat::type::ledger, rai::stat::detail::send, rai::stat::dir::in));
-	ASSERT_EQ (1, node1.stats.count (rai::stat::type::ledger, rai::stat::detail::receive, rai::stat::dir::in));
+	ASSERT_EQ (10u, node1.stats.count (rai::stat::type::ledger, rai::stat::dir::in));
+	ASSERT_EQ (2u, node1.stats.count (rai::stat::type::ledger, rai::stat::detail::send, rai::stat::dir::in));
+	ASSERT_EQ (1u, node1.stats.count (rai::stat::type::ledger, rai::stat::detail::receive, rai::stat::dir::in));
 }
 
 TEST (node, online_reps)
@@ -1617,15 +1617,15 @@ TEST (node, block_arrival)
 {
 	rai::system system (24000, 1);
 	auto & node (*system.nodes[0]);
-	ASSERT_EQ (0, node.block_arrival.arrival.size ());
+	ASSERT_EQ (0u, node.block_arrival.arrival.size ());
 	rai::block_hash hash1 (1);
 	node.block_arrival.add (hash1);
-	ASSERT_EQ (1, node.block_arrival.arrival.size ());
+	ASSERT_EQ (1u, node.block_arrival.arrival.size ());
 	node.block_arrival.add (hash1);
-	ASSERT_EQ (1, node.block_arrival.arrival.size ());
+	ASSERT_EQ (1u, node.block_arrival.arrival.size ());
 	rai::block_hash hash2 (2);
 	node.block_arrival.add (hash2);
-	ASSERT_EQ (2, node.block_arrival.arrival.size ());
+	ASSERT_EQ (2u, node.block_arrival.arrival.size ());
 }
 
 TEST (node, block_arrival_size)
@@ -1634,7 +1634,7 @@ TEST (node, block_arrival_size)
 	auto & node (*system.nodes[0]);
 	auto time (std::chrono::steady_clock::now () - rai::block_arrival::arrival_time_min - std::chrono::seconds (5));
 	rai::block_hash hash (0);
-	for (auto i (0); i < rai::block_arrival::arrival_size_min * 2; ++i)
+	for (auto i (0u); i < rai::block_arrival::arrival_size_min * 2; ++i)
 	{
 		node.block_arrival.arrival.insert (rai::block_arrival_info{ time, hash });
 		++hash.qwords[0];
@@ -1650,7 +1650,7 @@ TEST (node, block_arrival_time)
 	auto & node (*system.nodes[0]);
 	auto time (std::chrono::steady_clock::now ());
 	rai::block_hash hash (0);
-	for (auto i (0); i < rai::block_arrival::arrival_size_min * 2; ++i)
+	for (auto i (0u); i < rai::block_arrival::arrival_size_min * 2; ++i)
 	{
 		node.block_arrival.arrival.insert (rai::block_arrival_info{ time, hash });
 		++hash.qwords[0];
