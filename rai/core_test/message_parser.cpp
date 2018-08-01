@@ -78,21 +78,21 @@ TEST (message_parser, exact_confirm_ack_size)
 		rai::vectorstream stream (bytes);
 		message.serialize (stream);
 	}
-	ASSERT_EQ (0, visitor.confirm_ack_count);
+	ASSERT_EQ (0u, visitor.confirm_ack_count);
 	ASSERT_EQ (parser.status, rai::message_parser::parse_status::success);
 	auto error (false);
 	rai::bufferstream stream1 (bytes.data (), bytes.size ());
 	rai::message_header header1 (error, stream1);
 	ASSERT_FALSE (error);
 	parser.deserialize_confirm_ack (stream1, header1);
-	ASSERT_EQ (1, visitor.confirm_ack_count);
+	ASSERT_EQ (1u, visitor.confirm_ack_count);
 	ASSERT_EQ (parser.status, rai::message_parser::parse_status::success);
 	bytes.push_back (0);
 	rai::bufferstream stream2 (bytes.data (), bytes.size ());
 	rai::message_header header2 (error, stream2);
 	ASSERT_FALSE (error);
 	parser.deserialize_confirm_ack (stream2, header2);
-	ASSERT_EQ (1, visitor.confirm_ack_count);
+	ASSERT_EQ (1u, visitor.confirm_ack_count);
 	ASSERT_NE (parser.status, rai::message_parser::parse_status::success);
 }
 
@@ -108,21 +108,21 @@ TEST (message_parser, exact_confirm_req_size)
 		rai::vectorstream stream (bytes);
 		message.serialize (stream);
 	}
-	ASSERT_EQ (0, visitor.confirm_req_count);
+	ASSERT_EQ (0u, visitor.confirm_req_count);
 	ASSERT_EQ (parser.status, rai::message_parser::parse_status::success);
 	auto error (false);
 	rai::bufferstream stream1 (bytes.data (), bytes.size ());
 	rai::message_header header1 (error, stream1);
 	ASSERT_FALSE (error);
 	parser.deserialize_confirm_req (stream1, header1);
-	ASSERT_EQ (1, visitor.confirm_req_count);
+	ASSERT_EQ (1u, visitor.confirm_req_count);
 	ASSERT_EQ (parser.status, rai::message_parser::parse_status::success);
 	bytes.push_back (0);
 	rai::bufferstream stream2 (bytes.data (), bytes.size ());
 	rai::message_header header2 (error, stream2);
 	ASSERT_FALSE (error);
 	parser.deserialize_confirm_req (stream2, header2);
-	ASSERT_EQ (1, visitor.confirm_req_count);
+	ASSERT_EQ (1u, visitor.confirm_req_count);
 	ASSERT_NE (parser.status, rai::message_parser::parse_status::success);
 }
 
@@ -138,21 +138,21 @@ TEST (message_parser, exact_publish_size)
 		rai::vectorstream stream (bytes);
 		message.serialize (stream);
 	}
-	ASSERT_EQ (0, visitor.publish_count);
+	ASSERT_EQ (0u, visitor.publish_count);
 	ASSERT_EQ (parser.status, rai::message_parser::parse_status::success);
 	auto error (false);
 	rai::bufferstream stream1 (bytes.data (), bytes.size ());
 	rai::message_header header1 (error, stream1);
 	ASSERT_FALSE (error);
 	parser.deserialize_publish (stream1, header1);
-	ASSERT_EQ (1, visitor.publish_count);
+	ASSERT_EQ (1u, visitor.publish_count);
 	ASSERT_EQ (parser.status, rai::message_parser::parse_status::success);
 	bytes.push_back (0);
 	rai::bufferstream stream2 (bytes.data (), bytes.size ());
 	rai::message_header header2 (error, stream2);
 	ASSERT_FALSE (error);
 	parser.deserialize_publish (stream2, header2);
-	ASSERT_EQ (1, visitor.publish_count);
+	ASSERT_EQ (1u, visitor.publish_count);
 	ASSERT_NE (parser.status, rai::message_parser::parse_status::success);
 }
 
@@ -167,20 +167,20 @@ TEST (message_parser, exact_keepalive_size)
 		rai::vectorstream stream (bytes);
 		message.serialize (stream);
 	}
-	ASSERT_EQ (0, visitor.keepalive_count);
+	ASSERT_EQ (0u, visitor.keepalive_count);
 	ASSERT_EQ (parser.status, rai::message_parser::parse_status::success);
 	auto error (false);
 	rai::bufferstream stream1 (bytes.data (), bytes.size ());
 	rai::message_header header1 (error, stream1);
 	ASSERT_FALSE (error);
 	parser.deserialize_keepalive (stream1, header1);
-	ASSERT_EQ (1, visitor.keepalive_count);
+	ASSERT_EQ (1u, visitor.keepalive_count);
 	ASSERT_EQ (parser.status, rai::message_parser::parse_status::success);
 	bytes.push_back (0);
 	rai::bufferstream stream2 (bytes.data (), bytes.size ());
 	rai::message_header header2 (error, stream2);
 	ASSERT_FALSE (error);
 	parser.deserialize_keepalive (stream2, header2);
-	ASSERT_EQ (1, visitor.keepalive_count);
+	ASSERT_EQ (1u, visitor.keepalive_count);
 	ASSERT_NE (parser.status, rai::message_parser::parse_status::success);
 }
