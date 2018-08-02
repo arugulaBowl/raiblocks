@@ -157,8 +157,13 @@ wallet (wallet_a)
 		auto selection (view->selectionModel ()->selection ().indexes ());
 		if (selection.size () == 1)
 		{
-			auto error (this->wallet.account.decode_account (model->item (selection[0].row (), 1)->text ().toStdString ()));
+#ifndef NDEBUG
+			auto error =
+#endif
+			this->wallet.account.decode_account (model->item (selection[0].row (), 1)->text ().toStdString ());
+#ifndef NDEBUG
 			assert (!error);
+#endif
 			this->wallet.refresh ();
 		}
 	});
@@ -2111,8 +2116,13 @@ void rai_qt::block_creation::create_send ()
 					if (amount_l.number () <= balance)
 					{
 						rai::account_info info;
-						auto error (wallet.node.store.account_get (transaction, account_l, info));
+#ifndef NDEBUG
+						auto error =
+#endif
+							wallet.node.store.account_get (transaction, account_l, info);
+#ifndef NDEBUG
 						assert (!error);
+#endif
 						auto rep_block (wallet.node.store.block_get (transaction, info.rep_block));
 						assert (rep_block != nullptr);
 						rai::state_block send (account_l, info.head, rep_block->representative (), balance - amount_l.number (), destination_l, key, account_l, 0);
