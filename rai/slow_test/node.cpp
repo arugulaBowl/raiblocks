@@ -169,13 +169,13 @@ TEST (node, fork_storm)
 	auto previous (system.nodes[0]->latest (rai::test_genesis_key.pub));
 	auto balance (system.nodes[0]->balance (rai::test_genesis_key.pub));
 	ASSERT_FALSE (previous.is_zero ());
-	for (auto j (0); j != system.nodes.size (); ++j)
+	for (auto j (0u); j != system.nodes.size (); ++j)
 	{
 		balance -= 1;
 		rai::keypair key;
 		rai::send_block send (previous, key.pub, balance, rai::test_genesis_key.prv, rai::test_genesis_key.pub, 0);
 		previous = send.hash ();
-		for (auto i (0); i != system.nodes.size (); ++i)
+		for (auto i (0u); i != system.nodes.size (); ++i)
 		{
 			auto send_result (system.nodes[i]->process (send));
 			ASSERT_EQ (rai::process_result::progress, send_result.code);
@@ -292,7 +292,7 @@ TEST (broadcast, world_broadcast_simulate)
 		}
 	}
 	auto count (heard_count (nodes));
-	printf ("");
+	ASSERT_EQ(0u, count);
 }
 
 TEST (broadcast, sqrt_broadcast_simulate)
@@ -345,7 +345,7 @@ TEST (broadcast, sqrt_broadcast_simulate)
 		}
 	}
 	auto count (heard_count (nodes));
-	printf ("");
+	ASSERT_EQ(0u, count);
 }
 
 TEST (peer_container, random_set)
@@ -369,6 +369,7 @@ TEST (peer_container, random_set)
 	auto end (std::chrono::steady_clock::now ());
 	auto old_ms (std::chrono::duration_cast<std::chrono::milliseconds> (current - old));
 	auto new_ms (std::chrono::duration_cast<std::chrono::milliseconds> (end - current));
+	ASSERT_LT(old_ms, new_ms);
 }
 
 TEST (store, unchecked_load)
@@ -383,6 +384,7 @@ TEST (store, unchecked_load)
 	}
 	rai::transaction transaction (node.store.environment, nullptr, false);
 	auto count (node.store.unchecked_count (transaction));
+	ASSERT_EQ(0u, count);
 }
 
 TEST (store, vote_load)
