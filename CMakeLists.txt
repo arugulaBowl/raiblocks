@@ -176,6 +176,9 @@ if (CRYPTOPP_CUSTOM OR NOT RAIBLOCKS_SIMD_OPTIMIZATIONS)
 		cryptopp/sha.cpp
 		cryptopp/simple.cpp
 		cryptopp/winpipes.cpp)
+	# FIXME: Remove this definition as soon as cryptopp does not produce
+	# warnings
+	target_compile_options(cryptopp PRIVATE -Wno-error)
 else ()
 	set (CRYPTOPP_LIBRARY cryptopp-static)
 	add_subdirectory (cryptopp)
